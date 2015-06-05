@@ -1,8 +1,8 @@
 #!/bin/bash
-# Tomcat7 init script.
+# Tomcat8 init script.
 #
 # chkconfig:  - 80 20
-# description:  Start/stop script for Tomcat6
+# description:  Start/stop script for Tomcat8
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -10,12 +10,12 @@
 [ -f /etc/sysconfig/network ] && . /etc/sysconfig/network
 [ "${NETWORKING}" = "no" ] && exit 0
 
-prog="tomcat7"
+prog="tomcat8"
 [ -f /etc/sysconfig/$prog ] && . /etc/sysconfig/$prog
 
 TOMCATDEBUG=
 TOMCATSECURITY=${SECURITY:+"-security"}
-CATALINA_HOME=${CATALINA_HOME:="/opt/tomcat6"}
+CATALINA_HOME=${CATALINA_HOME:="/opt/tomcat8"}
 RUNAS_USER=${RUNAS_USER:="tomcat"}
 WAITFOR=${WAITFOR:=3}
 CATALINA_PID="/var/run/${prog}.pid"
