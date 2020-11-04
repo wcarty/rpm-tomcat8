@@ -19,7 +19,7 @@ jobs:
       uses: docker/build-push-action@v1 
       with:
         registry: ${{ secrets.docker_url }}
-        repository: fedora32 
+        repository: fedora33 
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_password }}
     
