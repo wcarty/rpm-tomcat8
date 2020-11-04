@@ -16,7 +16,7 @@ jobs:
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
       
     - name: Login to Docker Registry
-      uses: ${{ docker_url }}
+      uses: docker/login-action@v1
       with:
         username: ${{ docker_username }}
         password: ${{ docker_password }}
