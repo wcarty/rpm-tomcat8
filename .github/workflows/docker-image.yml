@@ -20,8 +20,6 @@ jobs:
       with:
         username: ${{ docker_username }}
         password: ${{ docker_password }}
-        
-        
     -
        name: Build and push
        id: docker_build
