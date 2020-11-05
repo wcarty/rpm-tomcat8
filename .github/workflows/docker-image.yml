@@ -13,14 +13,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag fedora33:latest
+      run: docker build . --file Dockerfile --tag centos6:latest
       
     - name: Scan Image with anchore
       uses: anchore/scan-action@main
       with:
         debug: true 
         image: centos6:latest 
-        acs-report-enable: high
+        acs-report-enable: default
         
     - name: Upload Anchore Scan Report
       uses: github/codeql-action/upload-sarif@v1
