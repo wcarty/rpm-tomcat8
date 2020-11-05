@@ -13,13 +13,13 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag centos6:latest
+      run: docker build . --file Dockerfile --tag fedora33:latest
       
     - name: Scan Image with anchore
       uses: anchore/scan-action@main
       with:
         debug: true 
-        image: centos6:latest 
+        image: fedora33:latest 
         acs-report-enable: default
         
     - name: Upload Anchore Scan Report
@@ -31,7 +31,7 @@ jobs:
       uses: docker/build-push-action@v1
       with:
         registry: ${{ secrets.docker_url }} 
-        repository: centos6 
+        repository: fedora33 
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_password }}
     
