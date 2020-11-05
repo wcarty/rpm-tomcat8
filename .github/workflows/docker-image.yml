@@ -14,10 +14,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag fedora33:latest
-    - uses: anchore/scan-action@v1
+    - name: Scan Image with anchore
+      uses: anchore/scan-action@master
       with:
         image-reference: "fedora33:latest"
-        dockerfile-path: "./Dockerfile"
+        fail-build: true
     
     - name: Login to Docker Registry
       uses: docker/build-push-action@v1 
