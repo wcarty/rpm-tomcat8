@@ -37,7 +37,7 @@ jobs:
     
     - name: Build the Docker image
       run: docker build . --file Dockerfile-fedora32 --tag fedora32:latest
-    - uses: anchore/scan-action@vmain
+    - uses: anchore/scan-action@main
       with:
         debug: true 
         image: fedora32:latest
