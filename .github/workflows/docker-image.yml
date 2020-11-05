@@ -18,6 +18,7 @@ jobs:
     - name: Scan Image with anchore
       uses: anchore/scan-action@v2.0.1
       with:
+        image: fedora33:latest 
         acs-report-enable: true
           
     - name: Login to Docker Registry
