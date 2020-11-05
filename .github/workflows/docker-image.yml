@@ -15,7 +15,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag fedora33:latest
     - name: Scan Image with anchore
-      uses: anchore/scan-action@v1
+      uses: anchore/scan-action@v2.0.1
       with:
         image-reference: "fedora33:latest"
         dockerfile-path: "./Dockerfile" 
@@ -33,7 +33,7 @@ jobs:
     
     - name: Build the Docker image
       run: docker build . --file Dockerfile-fedora32 --tag fedora32:latest
-    - uses: anchore/scan-action@v1
+    - uses: anchore/scan-action@v2.0.1
       with:
         image-reference: "fedora32:latest"
         dockerfile-path: "./Dockerfile-fedora32"
