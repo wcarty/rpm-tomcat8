@@ -18,7 +18,6 @@ jobs:
       with:
         image-reference: "fedora33:latest"
         dockerfile-path: "./Dockerfile"
-        fail-build: true
     
     - name: Login to Docker Registry
       uses: docker/build-push-action@v1 
