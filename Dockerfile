@@ -1,4 +1,4 @@
-FROM fedora:33
+FROM centos:6
 
 
-RUN dnf -y --setopt=fastestmirror=true install httpd curl podman git httpd-devel mod_ssl php && dnf clean all
+RUN yum -y install httpd php
