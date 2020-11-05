@@ -33,8 +33,8 @@ jobs:
       run: docker build . --file Dockerfile-fedora32 --tag fedora32:latest
     - uses: anchore/scan-action@v2.0.1
       with:
-        image-reference: "fedora32:latest"
-        dockerfile-path: "./Dockerfile-fedora32"
+        image: fedora32:latest
+        acs-report-enable: true
         fail-build: true
       
     - name: Login to Docker Registry
