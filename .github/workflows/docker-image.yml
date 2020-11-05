@@ -17,10 +17,6 @@ jobs:
       
     - name: Scan Image with anchore
       uses: anchore/scan-action@v2.0.1
-    - name: Anchore Container Scan
-      uses: 
-      with: anchore/scan-action@v2.0.1
-    
           
     - name: Login to Docker Registry
       uses: docker/build-push-action@v1 
