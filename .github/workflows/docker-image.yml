@@ -24,7 +24,12 @@ jobs:
         password: ${{ secrets.docker_password }}
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile-fedora32 --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile-fedora32 --tag fedora32:$(date +%s)
+    - uses: anchore/scan-action@v1
+       with:
+         image-reference: "fedora32:$(date +%s)"
+        dockerfile-path: "./Dockerfile-fedora32"
+        fail-build: true
       
     - name: Login to Docker Registry
       uses: docker/build-push-action@v1 
