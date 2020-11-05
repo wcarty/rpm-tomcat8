@@ -22,7 +22,7 @@ jobs:
         image: fedora33:latest 
               
     - name: Login to Docker Registry
-      uses: docker/build-push-action@v2 
+      uses: docker/build-push-action@v1 
       with:
         registry: ${{ secrets.docker_url }}
         repository: fedora33 
@@ -39,7 +39,7 @@ jobs:
         fail-build: default
       
     - name: Login to Docker Registry
-      uses: docker/build-push-action@v2 
+      uses: docker/build-push-action@v1 
       with:
         registry: ${{ secrets.docker_url }}
         repository: fedora32 
