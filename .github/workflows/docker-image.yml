@@ -16,15 +16,16 @@ jobs:
       run: docker build . --file Dockerfile --tag fedora33:latest
       
     - name: Scan Image with anchore
-      uses: anchore/scan-action@v2.0.1
+      uses: anchore/scan-action@main
       with:
         debug: true 
         image: fedora33:latest 
               
     - name: Login to Docker Registry
-      uses: docker/build-push-action@v2 
+      uses: docker/build-push-action@v1
       with:
-        repository: ${{ secrets.docker_url }}/fedora33 
+        registry: ${{ secrets.docker_url }} 
+        repository: fedora33 
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_password }}
     
