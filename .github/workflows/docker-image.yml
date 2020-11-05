@@ -19,8 +19,8 @@ jobs:
       uses: anchore/scan-action@main
       with:
         debug: true 
-        image: fedora33:latest 
-        acs-report-enable: critical
+        image: centos6:latest 
+        acs-report-enable: high
         
     - name: Upload Anchore Scan Report
       uses: github/codeql-action/upload-sarif@v1
@@ -31,7 +31,7 @@ jobs:
       uses: docker/build-push-action@v1
       with:
         registry: ${{ secrets.docker_url }} 
-        repository: fedora33 
+        repository: centos6 
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_password }}
     
