@@ -24,8 +24,7 @@ jobs:
     - name: Login to Docker Registry
       uses: docker/build-push-action@v1 
       with:
-        registry: ${{ secrets.docker_url }}
-        repository: fedora33 
+        repository: ${{ secrets.docker_url }}/fedora33 
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_password }}
     
