@@ -22,7 +22,7 @@ jobs:
         image: fedora33:latest 
               
     - name: Login to Docker Registry
-      uses: docker/build-push-action@v1 
+      uses: docker/build-push-action@v2 
       with:
         repository: ${{ secrets.docker_url }}/fedora33 
         username: ${{ secrets.docker_username }}
