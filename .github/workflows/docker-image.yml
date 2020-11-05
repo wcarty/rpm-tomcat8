@@ -17,6 +17,8 @@ jobs:
       
     - name: Scan Image with anchore
       uses: anchore/scan-action@v2.0.1
+      with:
+        acs-report-enable: true
           
     - name: Login to Docker Registry
       uses: docker/build-push-action@v1 
