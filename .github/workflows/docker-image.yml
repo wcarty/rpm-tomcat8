@@ -13,10 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile --tag fedora33:latest
     - uses: anchore/scan-action@v1
       with:
-        image-reference: "fedora33:$(date +%s)"
+        image-reference: "fedora33:latest"
         dockerfile-path: "./Dockerfile"
         fail-build: true
     
@@ -29,10 +29,10 @@ jobs:
         password: ${{ secrets.docker_password }}
     
     - name: Build the Docker image
-      run: docker build . --file Dockerfile-fedora32 --tag fedora32:$(date +%s)
+      run: docker build . --file Dockerfile-fedora32 --tag fedora32:latest
     - uses: anchore/scan-action@v1
       with:
-        image-reference: "fedora32:$(date +%s)"
+        image-reference: "fedora32:latest"
         dockerfile-path: "./Dockerfile-fedora32"
         fail-build: true
       
