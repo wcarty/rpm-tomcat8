@@ -35,25 +35,3 @@ jobs:
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_password }}
     
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile-fedora32 --tag fedora32:latest
-    - uses: anchore/scan-action@main
-      with:
-        debug: true 
-        image: fedora32:latest
-        acs-report-enable: true
-        fail-build: default
-        
-    - name: Upload Anchore Scan Report
-      uses: github/codeql-action/upload-sarif@v1
-      with:
-        sarif_file: results.sarif 
-      
-    - name: Login to Docker Registry
-      uses: docker/build-push-action@v1 
-      with:
-        registry: ${{ secrets.docker_url }}
-        repository: fedora32 
-        username: ${{ secrets.docker_username }}
-        password: ${{ secrets.docker_password }}
-    
