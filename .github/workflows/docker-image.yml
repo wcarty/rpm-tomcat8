@@ -18,8 +18,11 @@ jobs:
       uses: anchore/scan-action@v1
       with:
         image-reference: "fedora33:latest"
+        dockerfile-path: "./Dockerfile" 
         fail-build: true
-    
+    - name: anchore inline scan JSON results
+      run: for i in `ls ./anchore-reports/*.json`; do echo "---- ${j} ----"; cat ${j}; echo; done
+          
     - name: Login to Docker Registry
       uses: docker/build-push-action@v1 
       with:
