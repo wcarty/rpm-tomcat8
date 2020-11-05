@@ -18,9 +18,8 @@ jobs:
     - name: Scan Image with anchore
       uses: anchore/scan-action@v2.0.1
     - name: Anchore Container Scan
-      with:
-        image: "fedora33:latest" 
-        fail-build: false
+      uses: 
+      with: anchore/scan-action@v2.0.1
     
           
     - name: Login to Docker Registry
