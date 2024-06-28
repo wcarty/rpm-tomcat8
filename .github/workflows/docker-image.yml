@@ -1,0 +1,37 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  
+jobs:
+
+  build:
+
+    runs-on: [self-hosted]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag fedora33:latest
+      
+    - name: Scan Image with anchore
+      uses: anchore/scan-action@main
+      with:
+        debug: true 
+        image: fedora33:latest 
+        acs-report-enable: true
+        
+    - name: Upload Anchore Scan Report
+      uses: github/codeql-action/upload-sarif@v1
+      with:
+        sarif_file: results.sarif 
+              
+    - name: Login to Docker Registry
+      uses: docker/build-push-action@v1
+      with:
+        registry: ${{ secrets.docker_url }} 
+        repository: fedora33 
+        username: ${{ secrets.docker_username }}
+        password: ${{ secrets.docker_password }}
+    
