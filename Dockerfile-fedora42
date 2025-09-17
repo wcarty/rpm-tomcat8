@@ -1,13 +1,17 @@
 FROM fedora:42
 
 # Note: If SSL certificate issues occur during build, use --setopt=sslverify=false temporarily
-RUN dnf -y install ca-certificates && dnf clean all
+RUN dnf -y --setopt=sslverify=false install ca-certificates && dnf clean all
 
 # Install required packages with security focus
-RUN dnf -y --setopt=fastestmirror=true install \
-    httpd curl podman git httpd-devel mod_ssl php rpmdevtools \
+RUN dnf -y --setopt=sslverify=false --setopt=fastestmirror=true install \
+    httpd curl podman git httpd-devel mod_ssl php rpmdevtools openssh-server \
     && dnf clean all \
     && rm -rf /var/cache/dnf
+
+# Copy and run CIS Level 2 benchmark script
+COPY cis-level2-fedora.sh /tmp/cis-level2-fedora.sh
+RUN chmod +x /tmp/cis-level2-fedora.sh && /tmp/cis-level2-fedora.sh
 
 # Security hardening: Clean up temporary files
 RUN rm -rf /tmp/* /var/tmp/*
