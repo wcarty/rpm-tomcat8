@@ -1,3 +1,13 @@
 FROM quay.io/centos/centos:stream9
 
-RUN dnf -y --setopt=fastestmirror=true install httpd curl podman git httpd-devel mod_ssl php rpmdevtools && dnf clean all
+RUN dnf -y --setopt=sslverify=false --setopt=fastestmirror=true install httpd curl podman git httpd-devel mod_ssl php rpmdevtools openssh-server && dnf clean all
+
+# Copy and run CIS Level 2 benchmark script
+COPY cis-level2-centos.sh /tmp/cis-level2-centos.sh
+RUN chmod +x /tmp/cis-level2-centos.sh && /tmp/cis-level2-centos.sh
+
+# Security hardening: Clean up temporary files
+RUN rm -rf /tmp/* /var/tmp/*
+
+# Additional security: Create non-root user for tomcat operations
+RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
