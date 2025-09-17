@@ -1,4 +1,4 @@
-FROM fedora:33
+FROM fedora:41
 
 
 RUN dnf -y --setopt=fastestmirror=true upgrade && dnf clean all
