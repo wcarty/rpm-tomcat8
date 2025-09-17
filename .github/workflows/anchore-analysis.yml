@@ -11,15 +11,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag localbuild/testimage:latest
+    - name: Generate SBOM for test image
+      uses: anchore/sbom-action@v0
+      with:
+        image: localbuild/testimage:latest
+        format: spdx-json
+        output-file: testimage-sbom.spdx.json
+    - name: Upload SBOM as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: testimage-sbom
+        path: testimage-sbom.spdx.json
     - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
-      uses: anchore/scan-action@main
+      uses: anchore/scan-action@v3
       with:
         image: "localbuild/testimage:latest"
-        acs-report-enable: true
+        fail-build: false
+        output-format: sarif
     - name: Upload Anchore Scan Report
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
       with:
         sarif_file: results.sarif

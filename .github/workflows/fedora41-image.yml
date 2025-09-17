@@ -1,0 +1,45 @@
+name: Fedora 41 Docker Image
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build-fedora41:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v4
+      
+    - name: Build the Fedora 41 Docker image
+      run: docker build . --file Dockerfile-fedora41 --tag fedora41-minimal:latest
+      
+    - name: Generate SBOM for Fedora 41 image
+      uses: anchore/sbom-action@v0
+      with:
+        image: fedora41-minimal:latest
+        format: spdx-json
+        output-file: fedora41-minimal-sbom.spdx.json
+        
+    - name: Upload SBOM as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: fedora41-minimal-sbom
+        path: fedora41-minimal-sbom.spdx.json
+        
+    - name: Scan Fedora 41 image with Anchore
+      uses: anchore/scan-action@v3
+      with:
+        image: fedora41-minimal:latest
+        fail-build: false
+        output-format: sarif
+        
+    - name: Upload Fedora 41 Scan Report
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: results.sarif
+        category: fedora41-minimal

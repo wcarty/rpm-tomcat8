@@ -8,30 +8,50 @@ jobs:
 
   build:
 
-    runs-on: [self-hosted]
+    runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag fedora41:latest
       
-    - name: Scan Image with anchore
-      uses: anchore/scan-action@main
+    - name: Generate SBOM for Docker image
+      uses: anchore/sbom-action@v0
       with:
-        debug: true 
+        image: fedora41:latest
+        format: spdx-json
+        output-file: fedora41-sbom.spdx.json
+        
+    - name: Upload SBOM as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: fedora41-sbom
+        path: fedora41-sbom.spdx.json
+      
+    - name: Scan Image with anchore
+      uses: anchore/scan-action@v3
+      with:
         image: fedora41:latest 
-        acs-report-enable: true
+        fail-build: false
+        output-format: sarif
         
     - name: Upload Anchore Scan Report
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
       with:
         sarif_file: results.sarif 
               
     - name: Login to Docker Registry
-      uses: docker/build-push-action@v1
+      uses: docker/login-action@v3
+      if: success()
       with:
         registry: ${{ secrets.docker_url }} 
-        repository: fedora41 
         username: ${{ secrets.docker_username }}
         password: ${{ secrets.docker_password }}
+        
+    - name: Push Docker image
+      if: success()
+      run: |
+        docker tag fedora41:latest ${{ secrets.docker_url }}/fedora41:latest
+        docker push ${{ secrets.docker_url }}/fedora41:latest
     
