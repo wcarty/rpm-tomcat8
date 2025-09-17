@@ -1,20 +1,16 @@
 FROM fedora:42
 
 # Note: If SSL certificate issues occur during build, use --setopt=sslverify=false temporarily
-# This is due to certificate chain issues in some build environments
-RUN dnf -y upgrade && \
-    dnf -y install ca-certificates && \
-    dnf clean all
+RUN dnf -y install ca-certificates && dnf clean all
 
 # Install required packages with security focus
 RUN dnf -y --setopt=fastestmirror=true install \
-    httpd curl wget podman git httpd-devel mod_ssl php nano rpmdevtools \
+    httpd curl podman git httpd-devel mod_ssl php rpmdevtools \
     && dnf clean all \
     && rm -rf /var/cache/dnf
 
-# Security hardening: Clean up temporary files and caches
+# Security hardening: Clean up temporary files
 RUN rm -rf /tmp/* /var/tmp/*
 
 # Additional security: Create non-root user for tomcat operations
 RUN groupadd -r tomcat && useradd -r -g tomcat tomcat
-

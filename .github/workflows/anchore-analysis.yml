@@ -5,21 +5,26 @@
 # information on Anchore's container image scanning tool Grype, see
 # https://github.com/anchore/grype
 name: Anchore Container Scan
-on: push
+on: 
+  push:
+  pull_request:
+    branches: [ master ]
 jobs:
   Anchore-Build-Scan:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout the code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag localbuild/testimage:latest
     - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
-      uses: anchore/scan-action@main
+      uses: anchore/scan-action@v4
       with:
         image: "localbuild/testimage:latest"
+        fail-build: false
         acs-report-enable: true
     - name: Upload Anchore Scan Report
-      uses: github/codeql-action/upload-sarif@v1
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
       with:
         sarif_file: results.sarif
