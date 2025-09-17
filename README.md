@@ -51,3 +51,15 @@ If upgrading from the old tomcat8 package:
 3. Install the new tomcat package
 4. Migrate your configuration to `/etc/tomcat/`
 5. Update any service dependencies to use `tomcat` instead of `tomcat8`
+
+## Additional Resources
+
+- [SECURITY.md](SECURITY.md) - Security considerations and CVE information
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common build issues and solutions
+- [validate-build.sh](validate-build.sh) - Environment validation script
+
+## Quick Start
+
+1. Run validation: `./validate-build.sh`
+2. Build Docker image: `docker build -f Dockerfile-fedora42 .`
+3. Build RPM: Follow instructions in "To Build" section above
