@@ -6,7 +6,7 @@
 # wget https://raw.github.com/wcarty/rpm-tomcat8/master/tomcat.init -O ~/rpmbuild/SOURCES/tomcat.init
 # wget https://raw.github.com/wcarty/rpm-tomcat8/master/tomcat.sysconfig -O ~/rpmbuild/SOURCES/tomcat.sysconfig
 # wget https://raw.github.com/wcarty/rpm-tomcat8/master/tomcat.logrotate -O ~/rpmbuild/SOURCES/tomcat.logrotate
-# wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.24/bin/apache-tomcat-10.1.24.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-10.1.24.tar.gz
+# wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.33/bin/apache-tomcat-10.1.33.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-10.1.33.tar.gz
 # rpmbuild -bb ~/rpmbuild/SPECS/tomcat.spec
 
 %define __jar_repack %{nil}
@@ -14,9 +14,9 @@
 %define tomcat_group tomcat
 %define tomcat_user tomcat
 
-Summary:    Apache Servlet/JSP Engine, RI for Servlet 5.0/JSP 3.0 API
+Summary:    Apache Servlet/JSP Engine, RI for Servlet 5.0/JSP 3.0 API (CVE-patched)
 Name:       tomcat
-Version:    10.1.24
+Version:    10.1.33
 BuildArch:  noarch
 Release:    1
 License:    Apache Software License
@@ -111,6 +111,8 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Wed Dec 18 2024 Security Update <automation@localhost>
+- 10.1.33 - Updated to Tomcat 10.1.33 for CVE fixes, updated to Fedora 42, enhanced security hardening
 * Wed Dec 18 2024 Automated Update <automation@localhost>
 - 10.1.24 - Updated to Tomcat 10.1.24, renamed package from tomcat8 to tomcat, updated for latest Fedora/CentOS Stream
 * Fri Jun 5 2015 Wayne Carty <wayne.carty@risk.lexisnexis.com>
