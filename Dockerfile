@@ -1,6 +1,6 @@
-FROM fedora:41
+FROM fedora:44
 
 
 RUN dnf -y --setopt=fastestmirror=true upgrade && dnf clean all
-RUN dnf -y --setopt=fastestmirror=true install httpd curl wget podman git httpd-devel mod_ssl php nano && dnf clean all
+RUN dnf -y --setopt=fastestmirror=true install httpd curl wget podman git httpd-devel mod_ssl php nano rpmdevtools && dnf clean all
 
