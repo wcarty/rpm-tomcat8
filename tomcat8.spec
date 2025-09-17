@@ -6,7 +6,7 @@
 # wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.init -O ~/rpmbuild/SOURCES/tomcat8.init
 # wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.sysconfig -O ~/rpmbuild/SOURCES/tomcat8.sysconfig
 # wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.logrotate -O ~/rpmbuild/SOURCES/tomcat8.logrotate
-# wget http://www.motorlogy.com/apache/tomcat/tomcat-8/v8.0.23/bin/apache-tomcat-8.0.23.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-8.0.23.tar.gz
+# wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.95/bin/apache-tomcat-8.5.95.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-8.5.95.tar.gz
 # rpmbuild -bb ~/rpmbuild/SPECS/tomcat8.spec
 
 %define __jar_repack %{nil}
@@ -16,9 +16,9 @@
 
 Summary:    Apache Servlet/JSP Engine, RI for Servlet 2.4/JSP 2.0 API
 Name:       tomcat8
-Version:    8.0.23
+Version:    8.5.95
 BuildArch:  noarch
-Release:    1
+Release:    2
 License:    Apache Software License
 Group:      Networking/Daemons
 URL:        http://tomcat.apache.org/
@@ -26,7 +26,7 @@ Source0:    apache-tomcat-%{version}.tar.gz
 Source1:    %{name}.init
 Source2:    %{name}.sysconfig
 Source3:    %{name}.logrotate
-Requires:   jdk
+Requires:   java-11-openjdk
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
@@ -111,6 +111,8 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Mon Dec 23 2024 GitHub Copilot <copilot@github.com>
+- 8.5.95 - Updated to latest Tomcat 8.5.x series and Java 11
 * Fri Jun 5 2015 Wayne Carty <wayne.carty@risk.lexisnexis.com>
 - 8.0.23 
 * Thu Sep 4 2014 Edward Bartholomew <edward@bartholomew>

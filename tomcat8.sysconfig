@@ -6,11 +6,12 @@
 #
 # This is the $JAVA_HOME of JDK, not JRE. not needed if you've setup
 # the file "/etc/profile.d/java.sh" with this variable.
-#export JAVA_HOME="/usr/java"
+# For Java 11 on typical systems, use:
+#export JAVA_HOME="/usr/lib/jvm/java-11-openjdk"
 
 # CATALINA_HOME
 #
-# This is the installation directory of tomcat 8.
+# This is the installation directory of tomcat 8.5.
 # Default is /opt/tomcat8.
 #CATALINA_HOME="/opt/tomcat8"
 
