@@ -43,7 +43,6 @@ systemctl disable nfs.service 2>/dev/null || true
 systemctl disable rpcbind.service 2>/dev/null || true
 systemctl disable named.service 2>/dev/null || true
 systemctl disable vsftpd.service 2>/dev/null || true
-systemctl disable httpd.service 2>/dev/null || true
 systemctl disable dovecot.service 2>/dev/null || true
 systemctl disable smb.service 2>/dev/null || true
 systemctl disable squid.service 2>/dev/null || true
