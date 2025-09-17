@@ -47,13 +47,24 @@ Curl error (60): SSL peer certificate or SSH remote key was not OK
 
 ### Security Scan Failures
 
-**Problem**: Anchore/Grype scans report vulnerabilities
+**Problem**: Anchore/Grype scans report vulnerabilities and builds fail
 
 **Solution**:
 1. Update to latest base image: `docker pull fedora:42`
 2. Rebuild with latest packages
 3. Check for newer Tomcat releases
 4. Review scan results for false positives
+5. **New**: Builds now automatically fail on medium+ severity vulnerabilities - this is intentional for security
+
+### CIS Benchmark Issues
+
+**Problem**: CIS Level 2 benchmark script fails during build
+
+**Solution**:
+1. Ensure all required packages are installed (openssh-server, audit, etc.)
+2. Check that the script has execute permissions
+3. Review CIS audit logs in `/var/log/cis-audit/`
+4. Some CIS controls may not apply in containerized environments
 
 ### Java Version Conflicts
 
@@ -70,6 +81,16 @@ Curl error (60): SSL peer certificate or SSH remote key was not OK
    export JAVA_HOME="/usr/lib/jvm/java-21-openjdk"
    ```
 
+### GitHub Actions Failures
+
+**Problem**: Enhanced security workflows fail
+
+**Solution**:
+1. Check vulnerability scan results in GitHub Actions artifacts
+2. Review CIS benchmark application logs
+3. Ensure jq is available for JSON processing in workflows
+4. Verify artifact upload permissions are configured
+
 ## Validation
 
 Run the validation script to check your environment:
@@ -84,3 +105,6 @@ Run the validation script to check your environment:
 3. Monitor CVE databases for Tomcat updates
 4. Keep base OS images current
 5. Review and approve all package updates
+6. **New**: Review CIS compliance reports in GitHub artifacts
+7. **New**: Address medium+ severity vulnerabilities immediately
+8. **New**: Monitor security configuration changes through CIS audit logs

@@ -7,6 +7,11 @@ An RPM spec file to install Apache Tomcat 10.1.x with security updates and CVE f
 
 This version (10.1.33) includes important security fixes. See [SECURITY.md](SECURITY.md) for details.
 
+**Enhanced Security Features:**
+- **CIS Level 2 Benchmark**: Automatically applied to both Fedora 42 and CentOS Stream 9 images
+- **Vulnerability Scanning**: Builds fail automatically on medium+ severity vulnerabilities  
+- **Security Artifacts**: CIS compliance reports and vulnerability scan results captured in GitHub artifacts
+
 ## To Build:
 
 ### Prerequisites
@@ -30,9 +35,15 @@ This version (10.1.33) includes important security fixes. See [SECURITY.md](SECU
 
 This repository includes Docker support for building on:
 
-- **Fedora 42**: `docker build -f Dockerfile-fedora42 .`
-- **CentOS Stream 9**: `docker build -f Dockerfile-centos-stream .`
-- **Default (Fedora 42)**: `docker build .`
+- **Fedora 42**: `docker build -f Dockerfile-fedora42 .` (with CIS Level 2 hardening)
+- **CentOS Stream 9**: `docker build -f Dockerfile-centos-stream .` (with CIS Level 2 hardening)
+- **Default (Fedora 42)**: `docker build .` (with CIS Level 2 hardening)
+
+All Docker images include:
+- CIS Level 2 benchmark compliance
+- Automated security hardening
+- Vulnerability scanning integration
+- Security artifact generation
 
 ## Changes from tomcat8
 
@@ -42,6 +53,9 @@ This repository includes Docker support for building on:
 - Updated for compatibility with Fedora 42 and CentOS Stream distributions
 - Updated Java requirements to OpenJDK 21
 - Updated Servlet/JSP API support to 5.0/3.0
+- **New**: Added CIS Level 2 security benchmark compliance
+- **New**: Enhanced vulnerability scanning with build failures on medium+ severity
+- **New**: Automated security artifact collection and reporting
 
 ## Migration Notes
 
@@ -54,7 +68,7 @@ If upgrading from the old tomcat8 package:
 
 ## Additional Resources
 
-- [SECURITY.md](SECURITY.md) - Security considerations and CVE information
+- [SECURITY.md](SECURITY.md) - Security considerations, CIS compliance, and CVE information
 - [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Common build issues and solutions
 - [validate-build.sh](validate-build.sh) - Environment validation script
 
@@ -63,3 +77,12 @@ If upgrading from the old tomcat8 package:
 1. Run validation: `./validate-build.sh`
 2. Build Docker image: `docker build -f Dockerfile-fedora42 .`
 3. Build RPM: Follow instructions in "To Build" section above
+4. **Review security artifacts**: Check GitHub Actions artifacts for CIS compliance reports
+
+## Security Compliance
+
+This repository implements:
+- **CIS Level 2 Benchmark** for both Fedora and CentOS Stream
+- **Automated vulnerability scanning** with build failures on medium+ severity findings
+- **Security artifact collection** including compliance reports and scan results
+- **Continuous security monitoring** through GitHub Actions workflows

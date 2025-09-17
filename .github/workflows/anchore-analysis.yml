@@ -1,10 +1,11 @@
 # This workflow checks out code, builds an image, performs a container image
 # vulnerability scan with Anchore's Grype tool, and integrates the results with GitHub Advanced Security
-# code scanning feature.  For more information on the Anchore scan action usage
+# code scanning feature. Enhanced to fail builds on medium+ severity vulnerabilities.
+# For more information on the Anchore scan action usage
 # and parameters, see https://github.com/anchore/scan-action. For more
 # information on Anchore's container image scanning tool Grype, see
 # https://github.com/anchore/grype
-name: Anchore Container Scan
+name: Enhanced Anchore Container Scan
 on: 
   push:
   pull_request:
@@ -12,17 +13,91 @@ on:
 jobs:
   Anchore-Build-Scan:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [fedora42, centos-stream]
     steps:
     - name: Checkout the code
       uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag localbuild/testimage:latest
-    - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
+      
+    - name: Build the Docker image - ${{ matrix.platform }}
+      run: |
+        if [ "${{ matrix.platform }}" == "fedora42" ]; then
+          docker build . --file Dockerfile-fedora42 --tag localbuild/testimage-${{ matrix.platform }}:latest
+        else
+          docker build . --file Dockerfile-centos-stream --tag localbuild/testimage-${{ matrix.platform }}:latest
+        fi
+        
+    - name: Run the Anchore scan action with GitHub Advanced Security code scanning integration - ${{ matrix.platform }}
       uses: anchore/scan-action@v4
+      id: scan
       with:
-        image: "localbuild/testimage:latest"
+        image: "localbuild/testimage-${{ matrix.platform }}:latest"
         fail-build: false
         acs-report-enable: true
+        output-format: json
+        severity-cutoff: medium
+        
+    - name: Check vulnerability scan results - ${{ matrix.platform }}
+      run: |
+        # Parse the Grype results and check for medium+ severity vulnerabilities
+        MEDIUM_HIGH_VULNS=$(jq -r '.matches[] | select(.vulnerability.severity == "Medium" or .vulnerability.severity == "High" or .vulnerability.severity == "Critical") | .vulnerability.id' results.json | wc -l)
+        
+        echo "Found $MEDIUM_HIGH_VULNS medium or higher severity vulnerabilities in ${{ matrix.platform }}"
+        
+        # Create artifacts directory
+        mkdir -p scan-artifacts/${{ matrix.platform }}
+        
+        if [ "$MEDIUM_HIGH_VULNS" -gt 0 ]; then
+          echo "❌ Build failed due to medium or higher severity vulnerabilities in ${{ matrix.platform }}"
+          echo "=== Vulnerability Details ===" > scan-artifacts/${{ matrix.platform }}/vulnerability-failures.txt
+          jq -r '.matches[] | select(.vulnerability.severity == "Medium" or .vulnerability.severity == "High" or .vulnerability.severity == "Critical") | "ID: \(.vulnerability.id), Severity: \(.vulnerability.severity), Package: \(.artifact.name), Description: \(.vulnerability.description)"' results.json >> scan-artifacts/${{ matrix.platform }}/vulnerability-failures.txt
+          
+          # Copy full vulnerability report
+          cp results.json scan-artifacts/${{ matrix.platform }}/vulnerability-scan-results.json
+          
+          echo "## ❌ Security Scan Failed - ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Found $MEDIUM_HIGH_VULNS medium or higher severity vulnerabilities:" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          head -10 scan-artifacts/${{ matrix.platform }}/vulnerability-failures.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          
+          exit 1
+        else
+          echo "✅ No medium or higher severity vulnerabilities found in ${{ matrix.platform }}"
+          cp results.json scan-artifacts/${{ matrix.platform }}/vulnerability-scan-results.json
+          
+          echo "## ✅ Security Scan Passed - ${{ matrix.platform }}" >> $GITHUB_STEP_SUMMARY
+          echo "No medium or higher severity vulnerabilities found." >> $GITHUB_STEP_SUMMARY
+        fi
+        
+    - name: Extract CIS benchmark artifacts - ${{ matrix.platform }}
+      if: always()
+      run: |
+        # Extract CIS audit logs and reports from the container
+        docker run --rm -v $(pwd)/scan-artifacts/${{ matrix.platform }}:/host-artifacts localbuild/testimage-${{ matrix.platform }}:latest /bin/bash -c "
+          if [ -d /var/log/cis-audit ]; then
+            cp -r /var/log/cis-audit/* /host-artifacts/ 2>/dev/null || true
+          fi
+          
+          # Generate additional system information
+          echo '=== System Information ===' > /host-artifacts/system-info.txt
+          cat /etc/os-release >> /host-artifacts/system-info.txt
+          echo '' >> /host-artifacts/system-info.txt
+          echo '=== Security Configuration ===' >> /host-artifacts/system-info.txt
+          echo '--- sysctl settings ---' >> /host-artifacts/system-info.txt
+          sysctl -a 2>/dev/null | grep -E '(net\.|kernel\.|fs\.)' >> /host-artifacts/system-info.txt || true
+        "
+        
+    - name: Upload scan and CIS artifacts - ${{ matrix.platform }}
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-scan-${{ matrix.platform }}-${{ github.run_number }}
+        path: scan-artifacts/${{ matrix.platform }}/
+        retention-days: 30
+        
     - name: Upload Anchore Scan Report
       uses: github/codeql-action/upload-sarif@v3
       if: always()

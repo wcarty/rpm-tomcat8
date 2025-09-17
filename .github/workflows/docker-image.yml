@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image CI with Enhanced Security
 
 on:
   push:
@@ -14,24 +14,101 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag fedora42:latest
       
     - name: Build Fedora 42 specific image
       run: docker build . --file Dockerfile-fedora42 --tag fedora42-specific:latest
       
-    - name: Scan Image with anchore
+    - name: Build CentOS Stream image
+      run: docker build . --file Dockerfile-centos-stream --tag centos-stream:latest
+      
+    - name: Scan Fedora Image with anchore
       uses: anchore/scan-action@v4
+      id: scan-fedora
       with:
         image: fedora42:latest 
         fail-build: false
         acs-report-enable: true
+        output-format: json
+        
+    - name: Check Fedora vulnerability scan results
+      run: |
+        # Parse the Grype results and check for medium+ severity vulnerabilities
+        MEDIUM_HIGH_VULNS=$(jq -r '.matches[] | select(.vulnerability.severity == "Medium" or .vulnerability.severity == "High" or .vulnerability.severity == "Critical") | .vulnerability.id' results.json | wc -l)
+        
+        echo "Found $MEDIUM_HIGH_VULNS medium or higher severity vulnerabilities in Fedora image"
+        
+        if [ "$MEDIUM_HIGH_VULNS" -gt 0 ]; then
+          echo "❌ Build failed due to medium or higher severity vulnerabilities in Fedora image"
+          echo "=== Vulnerability Details ===" > fedora-vulnerability-failures.txt
+          jq -r '.matches[] | select(.vulnerability.severity == "Medium" or .vulnerability.severity == "High" or .vulnerability.severity == "Critical") | "ID: \(.vulnerability.id), Severity: \(.vulnerability.severity), Package: \(.artifact.name)"' results.json >> fedora-vulnerability-failures.txt
+          cat fedora-vulnerability-failures.txt
+          exit 1
+        else
+          echo "✅ No medium or higher severity vulnerabilities found in Fedora image"
+        fi
+        
+    - name: Scan CentOS Stream Image with anchore
+      uses: anchore/scan-action@v4
+      id: scan-centos
+      with:
+        image: centos-stream:latest 
+        fail-build: false
+        acs-report-enable: true
+        output-format: json
+        
+    - name: Check CentOS vulnerability scan results
+      run: |
+        # Parse the Grype results and check for medium+ severity vulnerabilities
+        MEDIUM_HIGH_VULNS=$(jq -r '.matches[] | select(.vulnerability.severity == "Medium" or .vulnerability.severity == "High" or .vulnerability.severity == "Critical") | .vulnerability.id' results.json | wc -l)
+        
+        echo "Found $MEDIUM_HIGH_VULNS medium or higher severity vulnerabilities in CentOS image"
+        
+        if [ "$MEDIUM_HIGH_VULNS" -gt 0 ]; then
+          echo "❌ Build failed due to medium or higher severity vulnerabilities in CentOS image"
+          echo "=== Vulnerability Details ===" > centos-vulnerability-failures.txt
+          jq -r '.matches[] | select(.vulnerability.severity == "Medium" or .vulnerability.severity == "High" or .vulnerability.severity == "Critical") | "ID: \(.vulnerability.id), Severity: \(.vulnerability.severity), Package: \(.artifact.name)"' results.json >> centos-vulnerability-failures.txt
+          cat centos-vulnerability-failures.txt
+          exit 1
+        else
+          echo "✅ No medium or higher severity vulnerabilities found in CentOS image"
+        fi
         
     - name: Upload Anchore Scan Report
       uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
         sarif_file: results.sarif 
+        
+    - name: Extract and upload CIS benchmark artifacts
+      if: always()
+      run: |
+        mkdir -p cis-artifacts/fedora42
+        mkdir -p cis-artifacts/centos-stream
+        
+        # Extract CIS artifacts from Fedora image
+        docker run --rm -v $(pwd)/cis-artifacts/fedora42:/host-artifacts fedora42-specific:latest /bin/bash -c "
+          if [ -d /var/log/cis-audit ]; then
+            cp -r /var/log/cis-audit/* /host-artifacts/ 2>/dev/null || true
+          fi
+        "
+        
+        # Extract CIS artifacts from CentOS image
+        docker run --rm -v $(pwd)/cis-artifacts/centos-stream:/host-artifacts centos-stream:latest /bin/bash -c "
+          if [ -d /var/log/cis-audit ]; then
+            cp -r /var/log/cis-audit/* /host-artifacts/ 2>/dev/null || true
+          fi
+        "
+        
+    - name: Upload CIS benchmark artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: cis-benchmark-artifacts-${{ github.run_number }}
+        path: cis-artifacts/
+        retention-days: 30
               
     - name: Login to Docker Registry
       if: github.event_name == 'push'
