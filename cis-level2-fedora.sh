@@ -134,8 +134,8 @@ echo "🛠️ Configuring system maintenance..."
 
 # Set file permissions (CIS 6.1.x)
 chmod 644 /etc/passwd 2>/dev/null || true
-chmod 000 /etc/shadow 2>/dev/null || true
-chmod 000 /etc/gshadow 2>/dev/null || true
+chmod 600 /etc/shadow 2>/dev/null || true
+chmod 600 /etc/gshadow 2>/dev/null || true
 chmod 644 /etc/group 2>/dev/null || true
 [ -f /etc/ssh/sshd_config ] && chmod 600 /etc/ssh/sshd_config || true
 
