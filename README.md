@@ -5,7 +5,7 @@ An RPM spec file to install Tomcat 8.0.
 
 To Build:
 
-`sudo yum -y install rpmdevtools && rpmdev-setuptree`
+`sudo dnf -y install rpmdevtools && rpmdev-setuptree`
 
 `wget https://raw.github.com/wcarty/rpm-tomcat8/master/tomcat8.spec -O ~/rpmbuild/SPECS/tomcat8.spec`
 

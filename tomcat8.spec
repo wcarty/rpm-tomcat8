@@ -1,6 +1,6 @@
 # To Build:
 #
-# sudo yum -y install rpmdevtools && rpmdev-setuptree
+# sudo dnf -y install rpmdevtools && rpmdev-setuptree
 #
 # wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.spec -O ~/rpmbuild/SPECS/tomcat8.spec
 # wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.init -O ~/rpmbuild/SOURCES/tomcat8.init
@@ -26,7 +26,7 @@ Source0:    apache-tomcat-%{version}.tar.gz
 Source1:    %{name}.init
 Source2:    %{name}.sysconfig
 Source3:    %{name}.logrotate
-Requires:   jdk
+Requires:   java-21-openjdk-devel
 BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
