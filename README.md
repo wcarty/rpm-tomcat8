@@ -26,9 +26,9 @@ An RPM spec file to install Apache Tomcat 10.1.x.
 
 This repository includes Docker support for building on:
 
-- **Fedora 42**: `docker build -f Dockerfile-fedora42 .`
-- **CentOS Stream 10**: `docker build -f Dockerfile-centos-stream .`
-- **Default (Fedora 42)**: `docker build .`
+- **Fedora 41**: `docker build -f Dockerfile-fedora41 .`
+- **CentOS Stream 9**: `docker build -f Dockerfile-centos-stream .`
+- **Default (Fedora 41)**: `docker build .`
 
 ## Changes from tomcat8
 
@@ -37,3 +37,13 @@ This repository includes Docker support for building on:
 - Changed installation path from `/opt/tomcat8` to `/opt/tomcat`
 - Updated for compatibility with latest Fedora and CentOS Stream distributions
 - Updated Java requirements to OpenJDK 21
+- Updated Servlet/JSP API support to 5.0/3.0
+
+## Migration Notes
+
+If upgrading from the old tomcat8 package:
+1. Stop the old tomcat8 service: `sudo systemctl stop tomcat8`
+2. Back up your configuration files from `/etc/tomcat8/`
+3. Install the new tomcat package
+4. Migrate your configuration to `/etc/tomcat/`
+5. Update any service dependencies to use `tomcat` instead of `tomcat8`
