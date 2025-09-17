@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Tomcat8 Configuration file
+# Tomcat Configuration file
 
 # JAVA_HOME
 #
@@ -10,9 +10,9 @@
 
 # CATALINA_HOME
 #
-# This is the installation directory of tomcat 8.
-# Default is /opt/tomcat8.
-#CATALINA_HOME="/opt/tomcat8"
+# This is the installation directory of tomcat.
+# Default is /opt/tomcat.
+#CATALINA_HOME="/opt/tomcat"
 
 # RUNAS_USER
 #

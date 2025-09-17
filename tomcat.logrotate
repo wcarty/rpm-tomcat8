@@ -1,4 +1,4 @@
-/var/log/tomcat8/catalina.out {
+/var/log/tomcat/catalina.out {
   copytruncate
   daily
   rotate 7

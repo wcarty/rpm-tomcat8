@@ -2,21 +2,21 @@
 #
 # sudo dnf -y install rpmdevtools && rpmdev-setuptree
 #
-# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.spec -O ~/rpmbuild/SPECS/tomcat8.spec
-# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.init -O ~/rpmbuild/SOURCES/tomcat8.init
-# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.sysconfig -O ~/rpmbuild/SOURCES/tomcat8.sysconfig
-# wget https://raw.github.com/nmilford/rpm-tomcat8/master/tomcat8.logrotate -O ~/rpmbuild/SOURCES/tomcat8.logrotate
-# wget http://www.motorlogy.com/apache/tomcat/tomcat-8/v8.0.23/bin/apache-tomcat-8.0.23.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-8.0.23.tar.gz
-# rpmbuild -bb ~/rpmbuild/SPECS/tomcat8.spec
+# wget https://raw.github.com/wcarty/rpm-tomcat8/master/tomcat.spec -O ~/rpmbuild/SPECS/tomcat.spec
+# wget https://raw.github.com/wcarty/rpm-tomcat8/master/tomcat.init -O ~/rpmbuild/SOURCES/tomcat.init
+# wget https://raw.github.com/wcarty/rpm-tomcat8/master/tomcat.sysconfig -O ~/rpmbuild/SOURCES/tomcat.sysconfig
+# wget https://raw.github.com/wcarty/rpm-tomcat8/master/tomcat.logrotate -O ~/rpmbuild/SOURCES/tomcat.logrotate
+# wget https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.24/bin/apache-tomcat-10.1.24.tar.gz -O ~/rpmbuild/SOURCES/apache-tomcat-10.1.24.tar.gz
+# rpmbuild -bb ~/rpmbuild/SPECS/tomcat.spec
 
 %define __jar_repack %{nil}
-%define tomcat_home /opt/tomcat8
+%define tomcat_home /opt/tomcat
 %define tomcat_group tomcat
 %define tomcat_user tomcat
 
-Summary:    Apache Servlet/JSP Engine, RI for Servlet 2.4/JSP 2.0 API
-Name:       tomcat8
-Version:    8.0.23
+Summary:    Apache Servlet/JSP Engine, RI for Servlet 5.0/JSP 3.0 API
+Name:       tomcat
+Version:    10.1.24
 BuildArch:  noarch
 Release:    1
 License:    Apache Software License
@@ -111,6 +111,8 @@ if [ $1 -ge 1 ]; then
 fi
 
 %changelog
+* Wed Dec 18 2024 Automated Update <automation@localhost>
+- 10.1.24 - Updated to Tomcat 10.1.24, renamed package from tomcat8 to tomcat, updated for latest Fedora/CentOS Stream
 * Fri Jun 5 2015 Wayne Carty <wayne.carty@risk.lexisnexis.com>
 - 8.0.23 
 * Thu Sep 4 2014 Edward Bartholomew <edward@bartholomew>

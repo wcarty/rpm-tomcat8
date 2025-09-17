@@ -1,4 +1,3 @@
 FROM fedora:41
 
-
-RUN dnf -y --setopt=fastestmirror=true install httpd curl podman git httpd-devel mod_ssl php && dnf clean all
+RUN dnf -y --setopt=fastestmirror=true install httpd curl podman git httpd-devel mod_ssl php rpmdevtools && dnf clean all
